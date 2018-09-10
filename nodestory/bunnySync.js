@@ -9,6 +9,4 @@ var wishlist = fs.readFileSync('wishlist.html').toString();
 //print the file
 console.log(wishlist);
 // Do another thing:
-console.log('ALERT: Pounce owner!!!');
-
-
+console.log('ALERTA: ¡Saltador sin prejuicios!');

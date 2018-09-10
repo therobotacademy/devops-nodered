@@ -1,0 +1,465 @@
+[{
+  "id": "aa10b9f2.e1e768",
+  "type": "inject",
+  "z": "b95de303.8357f",
+  "name": "Reset Database load",
+  "topic": "",
+  "payload": "true",
+  "payloadType": "bool",
+  "repeat": "",
+  "crontab": "",
+  "once": true,
+  "x": 180,
+  "y": 80,
+  "wires": [
+    ["3cfee90e.e1b656"]
+  ]
+}, {
+  "id": "3cfee90e.e1b656",
+  "type": "change",
+  "z": "b95de303.8357f",
+  "name": "",
+  "rules": [{
+    "t": "set",
+    "p": "db-loaded",
+    "pt": "flow",
+    "to": "false",
+    "tot": "bool"
+  }],
+  "action": "",
+  "property": "",
+  "from": "",
+  "to": "",
+  "reg": false,
+  "x": 410,
+  "y": 100,
+  "wires": [
+    ["e4428c7c.a3256"]
+  ]
+}, {
+  "id": "e3392c66.24565",
+  "type": "inject",
+  "z": "b95de303.8357f",
+  "name": "",
+  "topic": "",
+  "payload": "true",
+  "payloadType": "bool",
+  "repeat": "",
+  "crontab": "",
+  "once": true,
+  "x": 130,
+  "y": 160,
+  "wires": [
+    ["e4428c7c.a3256"]
+  ]
+}, {
+  "id": "e4428c7c.a3256",
+  "type": "switch",
+  "z": "b95de303.8357f",
+  "name": "Load Asset Database",
+  "property": "db-loaded",
+  "propertyType": "flow",
+  "rules": [{
+    "t": "false"
+  }, {
+    "t": "true"
+  }],
+  "checkall": "true",
+  "outputs": 2,
+  "x": 340,
+  "y": 160,
+  "wires": [
+    ["5a8a72cf.ac70fc"],
+    []
+  ],
+  "outputLabels": ["IoTP Target DB not loaded", "IoTP Target DB loaded"]
+}, {
+  "id": "a4038658.5e29e8",
+  "type": "debug",
+  "z": "b95de303.8357f",
+  "name": "",
+  "active": true,
+  "console": "false",
+  "complete": "false",
+  "x": 1070,
+  "y": 160,
+  "wires": []
+}, {
+  "id": "7066fe3a.6046b",
+  "type": "ui_form",
+  "z": "b95de303.8357f",
+  "name": "",
+  "label": "Add a new Asset",
+  "group": "7aa00cb0.2357d4",
+  "order": 0,
+  "width": 0,
+  "height": 0,
+  "options": [{
+    "label": "Asset Name",
+    "value": "AssetName",
+    "type": "text",
+    "required": true
+  }, {
+    "label": "Asset Type",
+    "value": "AssetType",
+    "type": "text",
+    "required": true
+  }, {
+    "label": "Asset ID",
+    "value": "AssetID",
+    "type": "text",
+    "required": true
+  }, {
+    "label": "Location",
+    "value": "Location",
+    "type": "text",
+    "required": true
+  }],
+  "formValue": {
+    "AssetName": "",
+    "AssetType": "",
+    "AssetID": "",
+    "Location": ""
+  },
+  "payload": "",
+  "topic": "",
+  "x": 120,
+  "y": 260,
+  "wires": [
+    ["7b922d64.f7cd14", "7b570109.2d0d5"]
+  ]
+}, {
+  "id": "7b922d64.f7cd14",
+  "type": "debug",
+  "z": "b95de303.8357f",
+  "name": "",
+  "active": true,
+  "console": "false",
+  "complete": "false",
+  "x": 350,
+  "y": 300,
+  "wires": []
+}, {
+  "id": "7d34209.c3318e",
+  "type": "ui_dropdown",
+  "z": "b95de303.8357f",
+  "name": "",
+  "label": "Select an Asset to Delete",
+  "place": "Existing Asset",
+  "group": "859d324e.db16b",
+  "order": 0,
+  "width": 0,
+  "height": 0,
+  "passthru": true,
+  "options": [{
+    "label": "AssetName",
+    "value": "Asset Name",
+    "type": "str"
+  }],
+  "payload": "",
+  "topic": "",
+  "x": 500,
+  "y": 560,
+  "wires": [
+    ["f63a421e.b2e4"]
+  ]
+}, {
+  "id": "49217a73.c58e04",
+  "type": "function",
+  "z": "b95de303.8357f",
+  "name": "Load Dropdown list",
+  "func": "var AssetList = global.get(\"Assets\");\nif (typeof AssetList == 'undefined') {\n    return null;\n}\nvar DropDownList = [];\n\n// Just load the list of Asset in the dropdown, not the Asset details\nfor (i=0; i < AssetList.length; i++) {\n    DropDownList.push(AssetList[i].AssetName);\n}\nmsg.options = DropDownList;\nreturn msg;",
+  "outputs": 1,
+  "noerr": 0,
+  "x": 250,
+  "y": 560,
+  "wires": [
+    ["7d34209.c3318e", "2af6f619.37da4a"]
+  ]
+}, {
+  "id": "2af6f619.37da4a",
+  "type": "debug",
+  "z": "b95de303.8357f",
+  "name": "",
+  "active": true,
+  "console": "false",
+  "complete": "options",
+  "x": 460,
+  "y": 520,
+  "wires": []
+}, {
+  "id": "7b570109.2d0d5",
+  "type": "function",
+  "z": "b95de303.8357f",
+  "name": "Add to Asset Array",
+  "func": "var AssetList = global.get(\"Assets\") || [];\n\n// Add the new Asset / Asset Details as an json object to the array of Assets\nAssetList.push(msg.payload);\n\nglobal.set(\"Assets\",AssetList);\nreturn msg;",
+  "outputs": 1,
+  "noerr": 0,
+  "x": 370,
+  "y": 260,
+  "wires": [
+    ["347dc534.6cf7ea", "8a43bf84.4bd3b"]
+  ]
+}, {
+  "id": "1a40d47f.1092dc",
+  "type": "function",
+  "z": "b95de303.8357f",
+  "name": "Remove Asset from Array",
+  "func": "// If the Delete Asset button has been pressed\nif( msg.payload === true ) {\n    var AssetList = global.get(\"Assets\");\n    if (typeof Assets == 'undefined') {\n        return null;\n    }\n    var SelectedAsset = flow.get(\"SelectedAsset\");\n    var Asset2Delete = {};\n    // Dropdown will return just the \"AssetName\" in the flow.SelectedOrg variable\n    // Iterate through the list, looking for the entry to remove\n    for (i=0; i < AssetList.length; i++) {\n        if( AssetList[i].AssetName === SelectedAsset ) {\n            Asset2Delete = AssetList[i];\n            // Remove the Asset json object to the AssetList array\n            AssetList.splice(i,1);\n        }\n    }\n    // Update the global array\n    global.set(\"Assets\",AssetList);\n    \n\n    // To delete documents from the database, provide values for \n    // _id and _rev and select the remove option in the Cloudant node. \n    // You can pass these values in the msg object itself or as an object in the msg.payload.\n    // Asset2Delete will contain :\n    //   {\"_id\":\"6c8e321192522d363c7d439993529cac\",\n    //    \"_rev\":\"1-1fbb9d32a306748e63e11f023cf3c4db\",\n    //    \"AssetName\":\"JWJWJW\",\n    //    \"key\":\"value\"}\n    \n    msg.payload = Asset2Delete;\n    return msg;\n} else { \n    return null;\n}",
+  "outputs": 1,
+  "noerr": 0,
+  "x": 820,
+  "y": 400,
+  "wires": [
+    ["e0a42653.2ddc18", "347dc534.6cf7ea", "64cf4b27.725b14"]
+  ]
+}, {
+  "id": "e0a42653.2ddc18",
+  "type": "debug",
+  "z": "b95de303.8357f",
+  "name": "",
+  "active": true,
+  "console": "false",
+  "complete": "false",
+  "x": 1070,
+  "y": 440,
+  "wires": []
+}, {
+  "id": "f63a421e.b2e4",
+  "type": "change",
+  "z": "b95de303.8357f",
+  "name": "",
+  "rules": [{
+    "t": "set",
+    "p": "SelectedAsset",
+    "pt": "flow",
+    "to": "payload",
+    "tot": "msg"
+  }],
+  "action": "",
+  "property": "",
+  "from": "",
+  "to": "",
+  "reg": false,
+  "x": 760,
+  "y": 560,
+  "wires": [
+    ["cbacb966.7c4228"]
+  ]
+}, {
+  "id": "cbacb966.7c4228",
+  "type": "ui_button",
+  "z": "b95de303.8357f",
+  "name": "",
+  "group": "859d324e.db16b",
+  "order": 0,
+  "width": "8",
+  "height": "1",
+  "passthru": false,
+  "label": "Delete this Asset",
+  "color": "",
+  "bgcolor": "",
+  "icon": "",
+  "payload": "true",
+  "payloadType": "bool",
+  "topic": "",
+  "x": 990,
+  "y": 560,
+  "wires": [
+    ["1a40d47f.1092dc"]
+  ]
+}, {
+  "id": "5c7342f0.dae7bc",
+  "type": "link in",
+  "z": "b95de303.8357f",
+  "name": "",
+  "links": ["347dc534.6cf7ea"],
+  "x": 95,
+  "y": 560,
+  "wires": [
+    ["49217a73.c58e04"]
+  ]
+}, {
+  "id": "347dc534.6cf7ea",
+  "type": "link out",
+  "z": "b95de303.8357f",
+  "name": "",
+  "links": ["5c7342f0.dae7bc"],
+  "x": 1005,
+  "y": 260,
+  "wires": []
+}, {
+  "id": "c3cec258.e31b1",
+  "type": "debug",
+  "z": "b95de303.8357f",
+  "name": "",
+  "active": false,
+  "console": "false",
+  "complete": "true",
+  "x": 810,
+  "y": 120,
+  "wires": []
+}, {
+  "id": "3c97c197.df993e",
+  "type": "inject",
+  "z": "b95de303.8357f",
+  "name": "",
+  "topic": "",
+  "payload": "",
+  "payloadType": "date",
+  "repeat": "10",
+  "crontab": "",
+  "once": false,
+  "x": 150,
+  "y": 660,
+  "wires": [
+    ["74651dfc.40ee54"]
+  ]
+}, {
+  "id": "74651dfc.40ee54",
+  "type": "function",
+  "z": "b95de303.8357f",
+  "name": "Build an Inventory Table",
+  "func": "var AssetList = global.get(\"Assets\");\nif (typeof AssetList == 'undefined') {\n    return null;\n}\n\nmsg.template=\"<style>h4 { text-align: center; margin: 10px; }\";\nmsg.template=msg.template+\"table {    width: 500px; height:650px   margin-top: 10px; }\";\nmsg.template=msg.template+\"th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #FFFFFF; width: 50%;}\";\nmsg.template=msg.template+\".classifier {background-color: rgb(85,150,230);text-align: center;}\";\nmsg.template=msg.template+\".title { background-color:LightGrey;}</style>\";\n\nmsg.template=msg.template+\"<table span=100%><tr><th>Assets</th><th>Type</th><th>ID</th><th>Location</th></tr>\";\n\nfor (var i = 0; i < AssetList.length; i++) {\n  msg.template = msg.template + \"<tr><td>\" + AssetList[i].AssetName + \"</td><td>\" + AssetList[i].AssetType + \"</td><td>\" + AssetList[i].AssetID + \"</td><td>\" +AssetList[i].Location + \"</td></tr>\";\n}\nmsg.template = msg.template + \"</table>\"\n\nreturn msg;",
+  "outputs": 1,
+  "noerr": 0,
+  "x": 370,
+  "y": 660,
+  "wires": [
+    ["bab84716.b6be78", "8a1d807e.9c034"]
+  ]
+}, {
+  "id": "bab84716.b6be78",
+  "type": "ui_template",
+  "z": "b95de303.8357f",
+  "group": "45065bb0.5d0c24",
+  "name": "",
+  "order": 0,
+  "width": "12",
+  "height": "7",
+  "format": "<div ng-bind-html=\"msg.template\"></div>",
+  "storeOutMessages": false,
+  "fwdInMessages": false,
+  "templateScope": "local",
+  "x": 580,
+  "y": 640,
+  "wires": [
+    []
+  ]
+}, {
+  "id": "8a1d807e.9c034",
+  "type": "debug",
+  "z": "b95de303.8357f",
+  "name": "",
+  "active": false,
+  "console": "false",
+  "complete": "template",
+  "x": 600,
+  "y": 680,
+  "wires": []
+}, {
+  "id": "a49101d2.916a1",
+  "type": "change",
+  "z": "b95de303.8357f",
+  "name": "Store DB in Global variable",
+  "rules": [{
+    "t": "set",
+    "p": "Assets",
+    "pt": "global",
+    "to": "payload",
+    "tot": "msg"
+  }, {
+    "t": "set",
+    "p": "db-loaded",
+    "pt": "flow",
+    "to": "true",
+    "tot": "bool"
+  }],
+  "action": "",
+  "property": "",
+  "from": "",
+  "to": "",
+  "reg": false,
+  "x": 810,
+  "y": 160,
+  "wires": [
+    ["347dc534.6cf7ea", "a4038658.5e29e8"]
+  ]
+}, {
+  "id": "8a43bf84.4bd3b",
+  "type": "cloudant out",
+  "z": "b95de303.8357f",
+  "name": "",
+  "cloudant": "",
+  "database": "assets",
+  "service": "_ext_",
+  "payonly": true,
+  "operation": "insert",
+  "successOutput": false,
+  "x": 570,
+  "y": 300,
+  "wires": []
+}, {
+  "id": "64cf4b27.725b14",
+  "type": "cloudant out",
+  "z": "b95de303.8357f",
+  "name": "",
+  "cloudant": "",
+  "database": "assets",
+  "service": "your-nodered-cloudantNoSQLDB",
+  "payonly": false,
+  "operation": "delete",
+  "x": 1050,
+  "y": 400,
+  "wires": []
+}, {
+  "id": "5a8a72cf.ac70fc",
+  "type": "cloudant in",
+  "z": "b95de303.8357f",
+  "name": "",
+  "cloudant": "",
+  "database": "assets",
+  "service": "_ext_",
+  "search": "_all_",
+  "design": "",
+  "index": "",
+  "x": 570,
+  "y": 160,
+  "wires": [
+    ["c3cec258.e31b1", "a49101d2.916a1"]
+  ]
+}, {
+  "id": "7aa00cb0.2357d4",
+  "type": "ui_group",
+  "z": "",
+  "name": "Add an Asset",
+  "tab": "ec61fe9f.defed",
+  "order": 1,
+  "disp": true,
+  "width": "6"
+}, {
+  "id": "859d324e.db16b",
+  "type": "ui_group",
+  "z": "",
+  "name": "Select an Asset to Delete",
+  "tab": "ec61fe9f.defed",
+  "order": 2,
+  "disp": true,
+  "width": "8"
+}, {
+  "id": "45065bb0.5d0c24",
+  "type": "ui_group",
+  "z": "",
+  "name": "Inventory List",
+  "tab": "ec61fe9f.defed",
+  "order": 3,
+  "disp": true,
+  "width": "12"
+}, {
+  "id": "ec61fe9f.defed",
+  "type": "ui_tab",
+  "z": "",
+  "name": "Asset Registration",
+  "icon": "dashboard",
+  "order": 7
+}]

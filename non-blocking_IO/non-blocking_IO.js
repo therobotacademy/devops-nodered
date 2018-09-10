@@ -1,3 +1,6 @@
+// Use sample files from:
+//   https://www.sample-videos.com/download-sample-text-file.php
+
 const fs = require('fs');
 const FILE = 'SampleTextFile_10kb.txt';
 
